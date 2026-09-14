@@ -17,7 +17,43 @@ This application rewrites draft emails using Duke's AI Gateway and the GPT 4.1 m
 
    ```bash
    uv sync
+   ```
 
+3. Create a .env file in the project folder.
+
+Add your Duke AI Gateway key:
+   ```bash
+   LITELLM_TOKEN=your_duke_ai_gateway_key_here
+   ```
+
+4. Run the application:
+
+   ```bash
+   uv run python app.py
+   ```
+
+5. Open:
+
+   ```bash
+   http://localhost:7860
+   ```
+
+6. Build the Docker image:
+
+   ```bash
+   docker build -t ai-email-rewriter .
+   ```
+
+7. Run the container:
+   ```bash
+   docker run --env-file .env -p 7860:7860 ai-email-rewriter
+   ```
+
+8. Open:
+   ```bash
+   http://localhost:7860
+      ```
+      
 ## Network Access Note
 
 The application connects to Duke's AI Gateway. If the Gateway connection times out while you are off campus, connect to Duke VPN and run the application again.
