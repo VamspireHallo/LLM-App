@@ -19,9 +19,8 @@ This application rewrites draft emails using Duke's AI Gateway and the GPT 4.1 m
    uv sync
    ```
 
-3. Create a .env file in the project folder.
+3. Create a .env file in the project folder. Add your Duke AI Gateway key:
 
-Add your Duke AI Gateway key:
    ```bash
    LITELLM_TOKEN=your_duke_ai_gateway_key_here
    ```
@@ -53,7 +52,7 @@ Add your Duke AI Gateway key:
    ```bash
    http://localhost:7860
       ```
-      
+
 ## Network Access Note
 
 The application connects to Duke's AI Gateway. If the Gateway connection times out while you are off campus, connect to Duke VPN and run the application again.

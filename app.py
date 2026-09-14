@@ -7,6 +7,7 @@ from openai import OpenAI
 # Loads LITELLM_TOKEN from the local .env file.
 load_dotenv()
 
+# LiteLLM Model Credits
 API_KEY = os.getenv("LITELLM_TOKEN")
 BASE_URL = "https://litellm.oit.duke.edu/v1"
 MODEL = "GPT 4.1"
