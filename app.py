@@ -7,7 +7,6 @@ from openai import OpenAI
 # Loads LITELLM_TOKEN from the local .env file.
 load_dotenv()
 
-# LiteLLM Model Credits
 API_KEY = os.getenv("LITELLM_TOKEN")
 BASE_URL = "https://litellm.oit.duke.edu/v1"
 MODEL = "GPT 4.1"
@@ -28,16 +27,43 @@ def rewrite_email(email_text: str, tone: str, history: list):
     history = history or []
 
     if not email_text or not email_text.strip():
-        message = "Please paste an email draft before clicking **Rewrite Email**."
+        message = "Please paste an email draft before clicking Rewrite My Email."
         return message, history, history
+
+    tone_guidance = {
+        "Friendly": (
+            "Use a warm, approachable, conversational style. "
+            "Use natural everyday language and contractions when appropriate. "
+            "Sound helpful and personable, not stiff or corporate."
+        ),
+        "Concise": (
+            "Use the fewest words possible while preserving the request. "
+            "Write no more than two short sentences after the subject line. "
+            "Remove greetings, filler, explanations, and unnecessary politeness."
+        ),
+        "Professional": (
+            "Use a polished workplace or academic style. "
+            "Be respectful, clear, and organized. "
+            "Use complete sentences and polite wording without sounding overly formal."
+        ),
+        "Formal": (
+            "Use a highly formal and respectful style. "
+            "Avoid contractions and casual wording. "
+            "Use elevated, courteous language appropriate for an official request."
+        ),
+    }
 
     prompt = f"""
 Rewrite the email below in a {tone.lower()} tone.
 
+Tone instructions:
+{tone_guidance[tone]}
+
 Rules:
 - Preserve the sender's intent and factual information.
 - Do not invent names, dates, attachments, promises, or details.
-- Make the message clear, natural, and ready to send.
+- Make the selected tone noticeably different from the other available tones.
+- Do not use nearly identical wording across tones.
 - Begin with a suggested subject line.
 - Then provide the rewritten email.
 - Do not explain your changes.
@@ -59,7 +85,7 @@ Original email:
                 },
                 {"role": "user", "content": prompt},
             ],
-            temperature=0.5,
+            temperature=0.8,
         )
 
         rewritten_email = response.choices[0].message.content
@@ -74,9 +100,9 @@ Original email:
 
     except Exception as error:
         message = (
-            "### Unable to generate a rewrite\n"
+            "Unable to generate a rewrite.\n\n"
             "Check your Duke API key, model name, and network connection.\n\n"
-            f"Technical message: `{error}`"
+            f"Technical message: {error}"
         )
         return message, history, history
 
@@ -89,8 +115,8 @@ def clear_history():
 with gr.Blocks(title="AI Email Rewriter") as demo:
     gr.Markdown("# AI Email Rewriter")
     gr.Markdown(
-        "Paste your email draft below, select a tone, and receive a clearer rewritten email. "
-        "Always review the result before sending."
+        "Paste your email draft below, select a tone, and receive a clearer "
+        "rewritten email. Always review the result before sending."
     )
 
     history_state = gr.State([])
@@ -115,18 +141,18 @@ with gr.Blocks(title="AI Email Rewriter") as demo:
     tone = gr.Dropdown(
         choices=["Professional", "Friendly", "Concise", "Formal"],
         value="Professional",
-        label="Desired tone",
+        label="Desired Tone",
     )
 
     generate_button = gr.Button("Rewrite My Email", variant="primary")
 
-    gr.Markdown("## Session history")
+    gr.Markdown("## Session History")
 
     history_table = gr.Dataframe(
         headers=["Tone", "Original Draft", "Generated Email"],
         value=[],
         interactive=False,
-        label="Your Previous Email Generations Down Below",
+        label="Your Previous Email Generations",
     )
 
     clear_button = gr.Button("Clear History")
